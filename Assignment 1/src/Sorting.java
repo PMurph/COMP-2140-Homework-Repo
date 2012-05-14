@@ -75,8 +75,9 @@ public class Sorting {
 		insertionSortArray = insertionSort(insertionSortArray);
 		quickSortArray = quickSort(quickSortArray, 0, quickSortArray.length);
 		mergeSortArray = mergeSort(mergeSortArray, 0, mergeSortArray.length, new String[mergeSortArray.length]);
-		for(int i = 0; i < mergeSortArray.length; i++)
-			System.out.println(mergeSortArray[i]);
+		radixSortArray = radixSort(radixSortArray);
+		for(int i = 0; i < radixSortArray.length; i++)
+			System.out.println(radixSortArray[i]);
 		
 	}
 	
@@ -174,6 +175,51 @@ public class Sorting {
 			quickSort(toSort, newPivot + 1, maxV);
 		}
 		
+		return toSort;
+	}
+	
+	private static String[] radixSort(String[] toSort){
+		int maxLength = 0;
+		char toTest = ' ';
+		String tmp = "";
+		int count = 0;
+		int tmpCount = 0;
+		ArrayList<ArrayList<String>> buckets = new ArrayList<ArrayList<String>>();
+		
+		for(int i = 0; i < 26; i++){
+			buckets.add(new ArrayList<String>());
+		}
+		
+		for(int i = 0 ; i < toSort.length; i++){
+			if( toSort[i].length() > maxLength){
+				maxLength = toSort[i].length();
+			}
+		}
+		
+		//Padding strings with lengths smaller than the max length with a's on their right side, so that they will
+		//appear before strings of longer length
+		for(int i = 0; i < maxLength; i++){
+			for(int j = 0; j < toSort.length; j++){
+				tmp = toSort[j].toLowerCase();
+				if(tmp.length() < maxLength && maxLength - i - 1 > tmp.length()-1){
+					toTest = 'a';
+				}else{
+					toTest = tmp.charAt(maxLength - i - 1);
+				}
+				buckets.get((int)toTest - (int)'a').add(toSort[j]);
+			}
+			count = 0;
+			tmpCount = 0;
+			while(count < buckets.size()){
+				for(int j = 0; j < buckets.get(0).size(); j++){
+					toSort[tmpCount] = buckets.get(0).get(j);
+					tmpCount++;
+				}
+				buckets.remove(0);
+				buckets.add(new ArrayList<String>());
+				count++;
+			}
+		}
 		return toSort;
 	}
 	
