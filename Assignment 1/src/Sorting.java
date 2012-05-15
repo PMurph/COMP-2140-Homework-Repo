@@ -67,18 +67,53 @@ public class Sorting {
 		String[] insertionSortArray = new String[inputArray.length];
 		String[] radixSortArray = new String[inputArray.length];
 		
+		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+		long startTime, endTime;
+		long[] durations = new long[4]; // 0: time for quick sort. 1: time for merge sort. 2: time for insertion sort. 3: time for radix sort
+		boolean[] areSorted = new boolean[4]; // 0: did quick sort work? 1: did merge sort work? 2: did insertion sort work? 3: did radix sort work? 
+		
 		System.arraycopy(inputArray, 0, quickSortArray, 0, inputArray.length);
 		System.arraycopy(inputArray, 0, mergeSortArray, 0, inputArray.length);
 		System.arraycopy(inputArray, 0, insertionSortArray, 0, inputArray.length);
 		System.arraycopy(inputArray, 0, radixSortArray, 0, inputArray.length);
-		//TODO: Finish up sorting methods
-		insertionSortArray = insertionSort(insertionSortArray);
-		quickSortArray = quickSort(quickSortArray, 0, quickSortArray.length);
-		mergeSortArray = mergeSort(mergeSortArray, 0, mergeSortArray.length, new String[mergeSortArray.length]);
-		radixSortArray = radixSort(radixSortArray);
-		for(int i = 0; i < radixSortArray.length; i++)
-			System.out.println(radixSortArray[i]);
 		
+		startTime = bean.getCurrentThreadCpuTime();
+		try{
+			quickSortArray = quickSort(quickSortArray, 0, quickSortArray.length);
+		}finally{
+			endTime = bean.getCurrentThreadCpuTime();
+		}
+		durations[0] = endTime - startTime;
+		areSorted[0] = isSorted(quickSortArray);
+		
+		startTime = bean.getCurrentThreadCpuTime();
+		try{
+			mergeSortArray = mergeSort(mergeSortArray, 0, mergeSortArray.length, new String[mergeSortArray.length]);
+		}finally{
+			endTime = bean.getCurrentThreadCpuTime();
+		}
+		durations[1] = endTime - startTime;
+		areSorted[1] = isSorted(mergeSortArray);
+		
+		startTime = bean.getCurrentThreadCpuTime();
+		try{
+			insertionSortArray = insertionSort(insertionSortArray);
+		}finally{
+			endTime = bean.getCurrentThreadCpuTime();
+		}
+		durations[2] = endTime - startTime;
+		areSorted[2] = isSorted(insertionSortArray);
+		
+		startTime = bean.getCurrentThreadCpuTime();
+		try{
+			radixSortArray = radixSort(radixSortArray);
+		}finally{
+			endTime = bean.getCurrentThreadCpuTime();
+		}
+		durations[3] = endTime - startTime;
+		areSorted[3] = isSorted(radixSortArray);
+		
+		printOutput(durations, areSorted);
 	}
 	
 	private static String[] insertionSort(String[] toSort){
@@ -99,24 +134,23 @@ public class Sorting {
 	}
 	
 	private static String[] mergeSort(String[] toSort, int minV, int maxV, String[] temp){
-		String[] toReturn = null;
+		String[] toReturn = toSort;
 		int midV = 0;
 		if(maxV > minV+1){
 			midV = (maxV - minV) / 2 + minV;
-			
-			mergeSort(toSort, minV, midV, temp);
-			mergeSort(toSort, midV, maxV, temp);
+
+			toSort = mergeSort(toSort, minV, midV, temp);
+			toSort = mergeSort(toSort, midV, maxV, temp);
 			toReturn = merge(toSort, minV, midV, maxV, temp);
 		}
 		return toReturn;
 	}
-	
+
 	private static String[] merge(String[] toSort, int minV, int midV, int maxV, String[] temp)
 	{
-		int currR = minV;
-		int currL = midV;
+		int currL = minV;
+		int currR = midV;
 		int currT = minV;
-		
 		while(currL < midV && currR < maxV){
 			if( toSort[currL].compareTo(toSort[currR]) <= 0){
 				temp[currT] = toSort[currL];
@@ -140,7 +174,7 @@ public class Sorting {
 				currR++;
 			}
 		}
-		for(int i = midV; i < maxV; i++)
+		for(int i = minV; i < maxV; i++)
 			toSort[i] = temp[i];
 		return toSort;
 	}
@@ -233,6 +267,33 @@ public class Sorting {
 		}
 		
 		return toReturn;
+	}
+	
+	private static void printOutput(long[] durations, boolean[] areSorted){
+		
+		if(areSorted[0]){
+			System.out.printf("%-10s: Success\n", "Quick");
+		}else{
+			System.out.printf("%-10s: Fail\n", "Quick");
+		}
+		
+		if(areSorted[1]){
+			System.out.printf("%-10s: Success\n", "Merge");
+		}else{
+			System.out.printf("%-10s: Fail\n", "Merge");
+		}
+		
+		if(areSorted[2]){
+			System.out.printf("%-10s: Success\n", "Insert");
+		}else{
+			System.out.printf("%-10s: Fail\n", "Insert");
+		}
+		
+		if(areSorted[3]){
+			System.out.printf("%-10s: Success\n", "Radix");
+		}else{
+			System.out.printf("%-10s: Fail\n", "Radix");
+		}
 	}
 	
 	private static File getFileViaChooser(){
