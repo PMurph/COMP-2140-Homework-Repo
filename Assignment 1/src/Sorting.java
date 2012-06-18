@@ -34,7 +34,6 @@ public class Sorting {
 				
 				input = br.readLine();
 			}
-			
 			sortArray(inputArray);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -46,7 +45,7 @@ public class Sorting {
 	private static void fillArrayList(ArrayList<String> toFill, String[] parsedInput){
 		for(int i = 0; i < parsedInput.length; i++){
 			if(parsedInput[i].matches("[A-Za-z]+")){
-					toFill.add(parsedInput[i]);
+					toFill.add(parsedInput[i].toLowerCase());
 			}
 		}
 	}
@@ -114,6 +113,19 @@ public class Sorting {
 		areSorted[3] = isSorted(radixSortArray);
 		
 		printOutput(durations, areSorted);
+		/*
+		System.out.println();
+		System.out.println();
+		int count = 0;
+		while( count < radixSortArray.length){
+			for(int i = 0; i < 30 && count < radixSortArray.length; i++){
+				System.out.print(radixSortArray[count] + " ");
+				count++;
+			}
+			System.out.println();
+		}
+				
+		*/
 	}
 	
 	private static String[] insertionSort(String[] toSort){
@@ -183,7 +195,7 @@ public class Sorting {
 		int newPivot = randomNum(minV, maxV);
 		String tmp = null;
 		int big = minV + 1;
-		int small = minV + 1;
+		//int small = minV + 1;
 		
 		if(maxV > minV + 1){
 			tmp = toSort[minV];
@@ -220,7 +232,7 @@ public class Sorting {
 		int tmpCount = 0;
 		ArrayList<ArrayList<String>> buckets = new ArrayList<ArrayList<String>>();
 		
-		for(int i = 0; i < 26; i++){
+		for(int i = 0; i < 27; i++){
 			buckets.add(new ArrayList<String>());
 		}
 		
@@ -236,15 +248,15 @@ public class Sorting {
 			for(int j = 0; j < toSort.length; j++){
 				tmp = toSort[j].toLowerCase();
 				if(tmp.length() < maxLength && maxLength - i - 1 > tmp.length()-1){
-					toTest = 'a';
+					toTest = (char)((int)'a'-1);
 				}else{
 					toTest = tmp.charAt(maxLength - i - 1);
 				}
-				buckets.get((int)toTest - (int)'a').add(toSort[j]);
+				buckets.get((int)toTest - ((int)'a'-1)).add(toSort[j]);
 			}
 			count = 0;
 			tmpCount = 0;
-			while(count < buckets.size()){
+			while(count < 27){
 				for(int j = 0; j < buckets.get(0).size(); j++){
 					toSort[tmpCount] = buckets.get(0).get(j);
 					tmpCount++;
@@ -261,8 +273,9 @@ public class Sorting {
 		boolean toReturn = true;
 		
 		for(int i = 0; i < toTest.length - 1; i++){
-			if(toTest[i].compareTo(toTest[i+1]) > 0){
+			if(toTest[i].toLowerCase().compareTo(toTest[i+1].toLowerCase()) > 0){
 				toReturn = false;
+				System.out.println(">>>>Not sorted: " + toTest[i] + "   " + toTest[i+1]);
 			}
 		}
 		
@@ -270,6 +283,27 @@ public class Sorting {
 	}
 	
 	private static void printOutput(long[] durations, boolean[] areSorted){
+		long min = 0;
+		int divisor = 1;
+		
+		min = durations[0];
+		for(int i = 1; i < durations.length; i++){
+			if( durations[i] < min ){
+				min = durations[i];
+			}
+		}
+		
+		while(min > 100){
+			min = min / 10;
+			divisor = divisor * 10;
+		}
+		
+		System.out.println("Patrick Murphy");
+		System.out.println("6850006");
+		System.out.println("COMP 2140");
+		System.out.println("Assignment 1");
+		
+		System.out.println("");
 		
 		if(areSorted[0]){
 			System.out.printf("%-10s: Success\n", "Quick");
@@ -294,6 +328,30 @@ public class Sorting {
 		}else{
 			System.out.printf("%-10s: Fail\n", "Radix");
 		}
+		
+		System.out.println();
+		
+		System.out.printf("%-10s| ", "Quick");
+		for(int i = 0; i < durations[0]/divisor && i < 100; i++)
+			System.out.print('#');
+		System.out.println(" [" + (durations[0]/1000) + "ms]");
+		
+		System.out.printf("%-10s| ", "Merge");
+		for(int i = 0; i < durations[1]/divisor && i < 100; i++)
+			System.out.print('#');
+		System.out.println(" [" + (durations[1]/1000) + "ms]");
+		
+		System.out.printf("%-10s| ", "Insert");
+		for(int i = 0; i < durations[2]/divisor && i < 100; i++)
+			System.out.print('#');
+		System.out.println(" [" + (durations[2]/1000) + "ms]");
+		
+		System.out.printf("%-10s| ", "Radix");
+		for(int i = 0; i < durations[3]/divisor && i < 100; i++)
+			System.out.print('#');
+		System.out.println(" [" + (durations[3]/1000) + "ms]");
+		
+		System.out.println("");
 	}
 	
 	private static File getFileViaChooser(){
@@ -317,3 +375,22 @@ public class Sorting {
 		processInput();
 	}
 }
+
+/*============================================
+Patrick Murphy
+6850006
+COMP 2140
+Assignment 1
+
+Quick     : Success
+Merge     : Success
+Insert    : Success
+Radix     : Success
+
+Quick     | ############################################################## [62400ms]
+Merge     | ############### [15600ms]
+Insert    | #################################################################################################### [3697223ms]
+Radix     | ############################################## [46800ms]
+
+===End of Processing===
+*/
