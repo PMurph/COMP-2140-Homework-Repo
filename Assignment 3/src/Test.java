@@ -2,11 +2,70 @@
 public class Test {
 	public static void main(String[] args){
 
-		
+		/*
 		emptyMatrixTests();
 		setAndGetTests();
+		*/
+		matrixMultiplicationTests();
 		
 		System.out.println("======End of Processing=====");
+	}
+	
+	private static void matrixMultiplicationTests(){
+		SparseMatrix sm1 = new SparseMatrix(2,3); 
+		SparseMatrix sm2 = new SparseMatrix(3,2);
+		
+		System.out.println("======Test 9======");
+		System.out.println(">Tests whether or not the multiplyBy function works for sparse matricies");
+		try{
+			//setup matrix 1
+			sm1.set(3.0, 1, 1);
+			sm1.set(-2.0, 1, 2);
+			sm1.set(3.0, 1, 3);
+			sm1.set(1.0, 2, 1);
+			sm1.set(5.0, 2, 2);
+			sm1.set(2.0, 2, 3);
+			
+			//setup matrix 2
+			sm2.set(-1.0, 1, 1);
+			sm2.set(1.0, 1, 2);
+			sm2.set(2.0, 2, 1);
+			sm2.set(0.0, 2, 2);
+			sm2.set(3.0, 3, 1);
+			sm2.set(1.0, 3, 2);
+			
+			sm1.multiplyBy(sm2);
+		}catch(Exception e){
+			System.out.println("Test Passed: False" );
+			e.printStackTrace();
+		}
+		
+		System.out.println("======Test 10======");
+		System.out.println(">Tests whether or not the multiplyBy function works for a sparse matrix and a 2d array");
+		try{
+			sm1 = new SparseMatrix(3, 3);
+			sm1.set(1.0, 1, 1);
+			sm1.set(2.0, 1, 3);
+			sm1.set(5.0, 2, 2);
+			sm1.set(1.0, 2, 3);
+			sm1.set(1.0, 3, 3);
+			
+			double[][] array2d = new double[3][3];
+			array2d[0][0] = 2.0;
+			array2d[0][1] = 3.0;
+			array2d[0][2] = 4.0;
+			array2d[1][0] = 5.0;
+			array2d[1][1] = 1.0;
+			array2d[1][2] = -1.0;
+			array2d[2][0] = -2.0;
+			array2d[2][1] = -3.0;
+			array2d[2][2] = 4.0;
+			
+			sm1.multiplyBy(array2d);
+		}catch(Exception e){
+			System.out.println("Test Passed: False");
+			e.printStackTrace();
+		}
 	}
 	
 	private static void setAndGetTests(){

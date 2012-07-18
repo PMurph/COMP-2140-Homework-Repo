@@ -1,4 +1,6 @@
 
+//There should be a file TesterUI.java that should be run instead of this one
+
 public class SparseMatrix {
 	private Node matrix;
 	private int rows;
@@ -10,6 +12,14 @@ public class SparseMatrix {
 		rows = numRows;
 		columns = numColumns;
 		printAfterSet = true;
+	}
+	
+	public int numRows(){
+		return rows;
+	}
+	
+	public int numCols(){
+		return columns;
 	}
 	
 	public double get(int row, int column) throws Exception{
@@ -170,6 +180,54 @@ public class SparseMatrix {
 	
 	public void togglePrintAfterSet(){
 		printAfterSet = !printAfterSet;
+	}
+	
+	public SparseMatrix multiplyBy(SparseMatrix other) throws Exception{
+		SparseMatrix toReturn = null;
+		double sum = 0.0;
+		
+		if( columns != other.rows )
+			throw new Exception("The number of rows in this matrix must be equal to the number of columns in the other matrix");
+		
+		toReturn = new SparseMatrix(rows, other.columns);
+		
+		for(int i = 1; i <= rows; i++ ){
+			for(int j = 1; j <= other.columns; j++){
+				sum = 0;
+				for(int k = 1; k <= columns; k++){
+					sum += get(i, k) * other.get(k, j);
+				}
+				toReturn.set(sum, i, j);
+			}
+		}
+		
+		return toReturn;
+	}
+	
+	public SparseMatrix multiplyBy(double[][] other) throws Exception{
+		SparseMatrix toReturn = null;
+		double sum = 0.0;
+		
+		if( columns != other.length )
+			throw new Exception("The number of rows in this matrix must be equal to the number of columns in the other matrix");
+		
+		toReturn = new SparseMatrix(rows, other[0].length);
+		
+		for(int i = 1; i <= rows; i++ ){
+			for(int j = 1; j <= other[0].length; j++){
+				sum = 0;
+				for(int k = 1; k <= columns; k++){
+					sum += get(i, k) * other[k - 1][j - 1];
+				}
+				toReturn.set(sum, i, j);
+			}
+		}
+		
+		return toReturn;
+	}
+	
+	public static void main(String[] args){
+		System.out.println("This file only contains the SparseMatrix class. Use the TesterUI file to run the user interface");
 	}
 	
 	private String rowToString(Node rowStart){
